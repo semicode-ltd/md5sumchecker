@@ -1,11 +1,10 @@
-/*
+/*/;
 @Description : Small Tool To Check MD5SUM For Files Downloaded With Direct Links :)
 @Author : Mohamed Saif Eldeen
 @Company : SemiCode Inc.
 @License : GPL V2.0
 @Date : Friday 15 May 2015
 @OS : It's Fucking Java Run It Any Where ;)
-
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License version 2,
@@ -24,7 +23,7 @@
 
 
 // Important Imports Needed in Programs
-
+import java.net.*;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -32,17 +31,17 @@ import java.io.*;
 import java.security.*;
 import java.util.*;
 import javax.swing.event.*;
-
 	public class md5check extends JFrame { // Begin Of Class
-		static JLabel main_label;
+		static JLabel main_label , semicode;
 		static JButton check , about , exit , select;
 		static JTextField first , second;
 		static JFileChooser fc;
 		static String result;
-		static JFrame about_frame;
+		static JFrame about_frame,quit;
 		public md5check() { // Constractor
 			super("MD5SUM Checker By : Mohamed Saif Eldeen");
 			main_label = new JLabel();
+			semicode = new JLabel ("SemiCode Inc.");
 			check = new JButton("Check");
 			about = new JButton("About");
 			exit = new JButton ("Exit");
@@ -51,6 +50,7 @@ import javax.swing.event.*;
 			second = new JTextField(30);
 			fc = new JFileChooser("browse");
 			about_frame = new JFrame ("About MD5SUM Checker");
+			quit = new JFrame ("Quit");
 			setSize(600,300);
 			setLocationRelativeTo(null);
 			setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -73,7 +73,10 @@ import javax.swing.event.*;
 			about_frame.setSize(300 , 400);
 			about_frame.setLocationRelativeTo(null);
 			about_frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-select.addActionListener(new ActionListener(){ // When Clicking On Select Button It Select File :) 
+			quit.setSize(300 , 100);
+			quit.setLocationRelativeTo(null);
+			//quit.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+select.addActionListener(new ActionListener(){ // When Clicking On Select Button It Select File :)
 public void actionPerformed (ActionEvent e) {
 	fc = new JFileChooser();
         int returnValue = fc.showOpenDialog(null);
@@ -83,7 +86,7 @@ public void actionPerformed (ActionEvent e) {
 	String name = selectedFile.getName();
 	System.out.println("Name is : "+name);
 	System.out.println("Check Sum is :"+getMD5Checksum(name.toString()));
-	first.setText(getMD5Checksum(name)); 
+	first.setText(getMD5Checksum(name));
 	} catch (Exception ex){
 	}
     	}
@@ -96,19 +99,26 @@ if (first.getText().equals(second.getText())){
 JOptionPane.showMessageDialog(null,"Checked Successfull :)");
 }
 else {
-JOptionPane.showMessageDialog(null, "Sorry :(" , "Unvalid File Redownload it" , JOptionPane.ERROR_MESSAGE);
+JOptionPane.showMessageDialog(null, "Unvalid File Redownload it" , "Sorry :(" , JOptionPane.ERROR_MESSAGE);
 }
 }
 });
 
 exit.addActionListener(new ActionListener(){ // Exiting Application When Click on Exit Button
 public void actionPerformed (ActionEvent e) {
-JOptionPane.showMessageDialog(null , "*Bye & Visit Us : www.semicode.org*");
+quit.setVisible(true);
+try {}
+catch (Exception ex) {
+goWebsite(semicode,"http://www.semicode.org" , "ClickHere");
+quit.add(semicode);
+quit.setVisible(true);
+}
+//JOptionPane.showMessageDialog(null , "*Bye & Visit Us : www.semicode.org*");
 System.exit(0);
 }
 });
 
-about.addActionListener(new ActionListener(){ // Simple Message Display Application's Developer info 
+about.addActionListener(new ActionListener(){ // Simple Message Display Application's Developer info
 public void actionPerformed (ActionEvent ex) {
 JOptionPane.showMessageDialog(null , "This Application Coded By : Mohamed Saif Eldeen Core Developer [At] SemiCode Inc. :)");
 about_frame.setVisible(true);
@@ -116,7 +126,7 @@ about_frame.setVisible(true);
 });
 
 }
-	
+
 	public byte[] createChecksum(String filename) throws Exception {
        InputStream fis =  new FileInputStream(filename);
 
@@ -143,14 +153,38 @@ about_frame.setVisible(true);
        }
        return result;
    	}
-	
+
+	private static void open(URI uri) {
+	    if (Desktop.isDesktopSupported()) {
+	      try {
+	        Desktop.getDesktop().browse(uri);
+	      } catch (IOException e) { /* TODO: error handling */ }
+	    } else { /* TODO: error handling */ }
+  }
+
+private void goWebsite(JLabel website, final String url, String text) {
+        website.setText("<html> Website : <a href=\"\">"+text+"</a></html>");
+        website.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        website.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                    try {
+                            Desktop.getDesktop().browse(new URI(url));
+                    } catch (URISyntaxException | IOException ex) {
+                            //It looks like there's a problem
+                    }
+            }
+        });
+    }
+
+
 public static void main(String[] args) { // Main Function :) >>> Program Execution Start From Here
 try { // Set Application Look & Feel To Default System Look & Feel
 UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 }
 catch (Exception ex) {
 ex.printStackTrace ();
-}	
+}
 new md5check(); // Calling Class Constractor
 }
 }
